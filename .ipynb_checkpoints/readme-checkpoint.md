@@ -20,7 +20,7 @@ Los notebooks siguen una progresión didáctica:
   Estimación de gradientes y nociones de ajuste.
 
 - **MO_3-3 LP (Bases).ipynb**  
-  Fundamentos de la programación lineal: bases, factibilidad, región poligonal.
+  Fundamentos de la programación lineal: holgura, factibilidad, bases.
 
 - **MO_3-4 LP (Simplex).ipynb**  
   Algoritmo Simplex, pasos iterativos y visualización de soluciones.
@@ -34,4 +34,4 @@ Los notebooks siguen una progresión didáctica:
 - **MO_3-7 MILP.ipynb**  
   Introducción a la programación lineal entera mixta (MILP).
 
-Los notebooks están apoyados por scripts auxiliares (`LP_helpers.py`, `modopt_helpers.py`) y figuras en la carpeta `assets/figs`.
+Los notebooks están apoyados por scripts auxiliares (carpeta `src`) y figuras en la carpeta `assets/figs`.
