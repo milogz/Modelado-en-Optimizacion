@@ -11,6 +11,7 @@ def plot_1d_paths(func, paths_dict, xlim=(-5, 5)):
     plt.xlabel("x"); plt.ylabel("f(x)")
     plt.title("Trayectorias 1-D"); plt.legend(); plt.grid(alpha=.3); plt.show()
 
+
 def plot_convergence(hist_dict, logy=True, ylabel="f"):
     for lbl, fvals in hist_dict.items():
         fvals = np.asarray(fvals)
@@ -21,6 +22,7 @@ def plot_convergence(hist_dict, logy=True, ylabel="f"):
         plt.yscale("log")
     plt.xlabel("Iter"); plt.ylabel(ylabel)
     plt.title("Convergencia"); plt.legend(); plt.grid(alpha=.3); plt.show()
+
 
 def plot_2d_contour(func, paths_dict, span=((-2,2), (-2,2)), levels=25):
     gx = np.linspace(*span[0], 200)
@@ -43,6 +45,7 @@ def lift_1d(f, df):
     def f_vec(X):
         x = float(np.asarray(X).ravel()[0])
         return f(x)
+
     def grad_vec(X):
         x = float(np.asarray(X).ravel()[0])
         return np.array([df(x)], dtype=float)
