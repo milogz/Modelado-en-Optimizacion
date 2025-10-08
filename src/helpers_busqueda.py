@@ -1,6 +1,43 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+def init_busqueda():
+  import numpy as np
+  import matplotlib.pyplot as plt
+  plt.rcParams["figure.figsize"] = (6, 4)
+  np.set_printoptions(precision=4, suppress=True)
+  return np, plt
+
+from IPython.display import Image, display
+from pathlib import Path
+import os
+
+def show_fig(nombre, subruta="assets/figs"):
+    """
+    Busca y muestra una imagen de forma robusta para Jupyter y Colab.
+    - nombre: nombre del archivo
+    - subruta: ruta relativa esperada dentro del proyecto
+    """
+    # 1️⃣ posibles ubicaciones
+    posibles_rutas = [
+        Path(nombre),  # mismo directorio
+        Path.cwd() / nombre,  # cwd directo
+        Path.cwd() / subruta / nombre,  # estructura local tipo repo
+        Path("/content") / nombre,  # raíz de colab
+        Path("/content") / subruta / nombre,  # colab con estructura repo
+    ]
+
+    # 2️⃣ buscar primera ruta existente
+    ruta_final = next((p for p in posibles_rutas if p.exists()), None)
+
+    # 3️⃣ mostrar resultado
+    if ruta_final:
+        #print(f"✅ Imagen encontrada en: {ruta_final}")
+        display(Image(filename=str(ruta_final)))
+    else:
+        print(f"⚠️ No se encontró {nombre} en las rutas esperadas: {posibles_rutas}")
+
+
 def plot_1d_paths(func, paths_dict, xlim=(-5, 5)):
     xs_curve = np.linspace(*xlim, 400)
     plt.plot(xs_curve, func(xs_curve), lw=2, label="$f(x)$")
