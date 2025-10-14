@@ -3,6 +3,54 @@ import numpy as np
 import matplotlib.pyplot as plt
 from IPython.display import display, Math, HTML
 
+from ipywidgets import FloatSlider, VBox, HBox, HTML, interactive_output, Checkbox, Button, Output, Layout
+
+def eval_bases(A_full, b, var_names):
+    checks = [Checkbox(value=(name in ['s1','s2','s3']), description=name, indent=False, layout=Layout(width='70px')) for name in var_names]
+    btn_eval = Button(description="Evaluar base", button_style="primary")
+    msg = HTML(); out_math = Output(); out_plot = Output()
+    def on_eval(_):
+        out_math.clear_output(); out_plot.clear_output(); msg.value=""
+        Bcols = [i for i,cb in enumerate(checks) if cb.value]
+        if len(Bcols)!=3: msg.value="<b>Selecciona exactamente m=3.</b>"; return
+        info = basis_info(A_full, b, np.r_[c,0,0,0], Bcols)
+        x = info['x']
+        with out_math:
+            display(Math(r"\textbf{B}="+mat_to_bmatrix(info['B'])))
+            display(Math(r"\textbf{N}="+mat_to_bmatrix(info['N'])))
+            display(Math(r"I_B=\{"+", ".join(str(i+1) for i in info['Bcols'])+r"\},\ I_N=\{"+", ".join(str(j+1) for j in info['Ncols'])+r"\}"))
+            display(Math(r"\mathbf{x}_N=\mathbf{0},\ \mathbf{x}_B=\mathbf{B}^{-1}\mathbf{b}="+vec_to_bmatrix(info['xB'], fmt='{:.3g}')))
+            display(Math(r"\Rightarrow\ \mathbf{x}="+vec_to_bmatrix(x, fmt='{:.3g}')))
+        with out_plot:
+            fig, (ax1, ax2) = plt.subplots(1,2, figsize=(11,5))
+            plot_method_graph(A,b,x=x[:2],ax=ax1,title="Region factible y vértice de la base elegida", show_fill=True)
+            s = slacks(A,b,x[:2]); 
+            colors=['tab:grey','tab:grey','tab:blue','tab:orange','tab:green']        
+            bar_slacks(np.hstack([x[:2], s]), colors=colors, ax=ax2, names=["x1","x2","s1","s2","s3"])
+            plt.show()
+    btn_eval.on_click(on_eval)
+    display(VBox([HBox(checks), btn_eval, msg, out_math, out_plot]))
+
+
+def plot_LP(A,b,c):
+    slider_x1 = FloatSlider(value=0.0, min=0.0, max=4.0, step=0.1, description="x1")
+    slider_x2 = FloatSlider(value=0.0, min=0.0, max=4.0, step=0.1, description="x2")
+    info = HTML()
+
+    def ui_x(x1, x2):
+        x = np.array([x1,x2]); s = slacks(A,b,x)
+        fig, (ax1, ax2) = plt.subplots(1,2, figsize=(11,5))
+        plot_method_graph(A, b, x=x, ax=ax1, title="Región factible", show_fill=True)
+        colors = ["tab:grey", "tab:grey", "tab:blue","tab:orange","tab:green"]
+        bar_slacks(np.hstack([x, s]), colors=colors, ax=ax2, names=["x1","x2","s1","s2","s3"])
+        ax2.set_title("Variables (originales y holguras)"); plt.show()
+        feas = np.all(s >= -1e-9)
+        info.value = f"<b>¿Factible?:</b> {'Sí' if feas else 'No'}"
+    out = interactive_output(ui_x, {'x1': slider_x1, 'x2': slider_x2})
+    display(VBox([HBox([slider_x1, slider_x2]), info, out]))
+
+
+
 def mat_to_bmatrix(M, fmt="{:g}"):
     import numpy as np
     rows = [" & ".join(fmt.format(v) for v in row) for row in np.array(M)]
