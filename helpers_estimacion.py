@@ -4,6 +4,19 @@ import ipywidgets as W
 import matplotlib.pyplot as plt
 
 
+def init_estimacion():
+    import numpy as np
+    import matplotlib.pyplot as plt
+    from urllib.request import urlopen
+    import pandas as pd
+    import ipywidgets as widgets
+    from IPython.display import display
+
+    np.set_printoptions(precision=4, suppress=True)
+    plt.rcParams["figure.figsize"] = (6,4)
+
+    return np, plt, urlopen, pd, widgets, display
+
 def ejemplo_ilustrativo():
 	np.random.seed(42)
 
@@ -94,7 +107,7 @@ def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
     display(out)
 
 
-def fit_ols_univar(x, y):
+def fit_ols(x, y):
     """
     Ajusta OLS univariado: y = m x + b, vía mínimos cuadrados (lstsq).
     Devuelve: m, b, y una función predictora f(X).
@@ -120,7 +133,7 @@ def metrics_ols(y_true, y_pred):
     return {"R2": r2, "RMSE": rmse, "MAE": mae}
 
 
-def plot_ols_with_residuals(x, y, m, b, title="", xlabel="x", ylabel="y",
+def plot_ols(x, y, m, b, title="", xlabel="x", ylabel="y",
                             sample_for_scatter=150, resid_alpha=0.25, point_alpha=0.5):
     """
     Scatter de (x,y), recta y=m x + b, y líneas punteadas de residuo (verticales).
