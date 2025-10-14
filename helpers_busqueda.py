@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from IPython.display import HTML, display
 
 def init_busqueda():
   import numpy as np
@@ -87,3 +88,39 @@ def lift_1d(f, df):
         x = float(np.asarray(X).ravel()[0])
         return np.array([df(x)], dtype=float)
     return f_vec, grad_vec
+
+def tabla_comp():    
+
+    html_table = """
+    <table style="border-collapse: collapse; width: 100%; text-align: center;">
+      <tr style="background-color: #f0f0f0;">
+        <th></th>
+        <th>No lineal sin restricciones</th>
+        <th>Lineal con restricciones (LP)</th>
+        <th>No lineal con restricciones (NLP)</th>
+        <th>Entero lineal (MIP)</th>
+      </tr>
+      <tr>
+        <td style="font-weight: bold;">Forma general</td>
+        <td>\\(\\min f_{\\text{nonlin}}(x), \\; x \\in \\mathbb{R}^n\\)</td>
+        <td>\\(\\min f(x) = c^T x, \\; A x \\le b, \\; x \\in \\mathbb{R}^n\\)</td>
+        <td>\\(\\min f_{\\text{nl con restr}}(x), \\; g(x) \\le b, \\; x \\in \\mathbb{R}^n\\)</td>
+        <td>\\(\\min f(x) = c^T x, \\; A x \\le b, \\; x \\in \\mathbb{Z}^n\\)</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold;">Ejemplos de aplicación</td>
+        <td>Ajuste de parámetros sin restricciones (estadística, <i>machine learning</i>, métodos numéricos)</td>
+        <td>Mezclas, asignación, planeación de producción, manejo de inventarios</td>
+        <td>Diseño de ingeniería con procesos físicos, portafolios con riesgo no lineal</td>
+        <td><i>Scheduling</i>, ruteo, asignación entera</td>
+      </tr>
+      <tr>
+        <td style="font-weight: bold;">Métodos típicos de solución</td>
+        <td>Gradiente y sus variantes, heurísticas y aproximaciones numéricas</td>
+        <td>Simplex, Punto Interior</td>
+        <td>Programación cuadrática o convexa (<i>via solvers</i>), métodos numéricos</td>
+        <td>Branch & Bound (<i>via solvers</i>)</td>
+      </tr>
+    </table>
+    """
+    display(HTML(html_table))
