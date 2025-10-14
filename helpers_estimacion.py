@@ -133,12 +133,14 @@ def metrics_ols(y_true, y_pred):
     return {"R2": r2, "RMSE": rmse, "MAE": mae}
 
 
-def plot_ols(x, y, m, b, title="", xlabel="x", ylabel="y",
+def plot_ols(x, y, title="", xlabel="x", ylabel="y",
                             sample_for_scatter=150, resid_alpha=0.25, point_alpha=0.5):
     """
     Scatter de (x,y), recta y=m x + b, y líneas punteadas de residuo (verticales).
     sample_for_scatter: para datasets grandes, submuestrea puntos (solo para el scatter).
     """
+    m, b, f = fit_ols(x, y)      # m: pendiente; b: intercepto; f: función/modelo de estimación (b+m*x)
+
     x = np.asarray(x).ravel()
     y = np.asarray(y).ravel()
 
