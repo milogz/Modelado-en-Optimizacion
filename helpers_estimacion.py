@@ -4,19 +4,6 @@ import ipywidgets as W
 import matplotlib.pyplot as plt
 
 
-def init_estimacion():
-    import numpy as np
-    import matplotlib.pyplot as plt
-    from urllib.request import urlopen
-    import pandas as pd
-    import ipywidgets as widgets
-    from IPython.display import display
-
-    np.set_printoptions(precision=4, suppress=True)
-    plt.rcParams["figure.figsize"] = (6,4)
-
-    return np, plt, urlopen, pd, widgets, display
-
 def ejemplo_ilustrativo():
 	np.random.seed(42)
 
@@ -66,8 +53,8 @@ def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
     x = np.asarray(x).ravel()
     y = np.asarray(y).ravel()
 
-    m_slider = W.FloatSlider(value=m_init, min=-10, max=10, step=0.1, description="Pendiente")
-    b_slider = W.FloatSlider(value=b_init, min=-20, max=20, step=0.5, description="Intercepto")
+    b_slider = W.FloatSlider(value=b_init, min=-20, max=20, step=0.5, description="a (intercepto)")
+    m_slider = W.FloatSlider(value=m_init, min=-10, max=10, step=0.1, description="b (pendiente)")
 
     out = W.Output()
 
@@ -78,7 +65,8 @@ def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
             # Predicción y residuos
             y_hat = m * x + b
             resid = y - y_hat
-            rmse = np.sqrt(np.mean(resid**2))
+            #rmse = np.sqrt(np.mean(resid**2))
+            sse = sum(resid**2)
 
             # Ordenar para la línea (más bonito)
             order = np.argsort(x)
@@ -98,7 +86,7 @@ def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
 
             ax.set_xlabel("x")
             ax.set_ylabel("y")
-            ax.set_title(f"Ajuste manual • RMSE = {rmse:.3f}")
+            ax.set_title(f"Ajuste manual • Suma Errores = {sse:.3f}")
             ax.legend(loc="best")
             ax.grid(True, linewidth=0.3, alpha=0.5)
             plt.show()
