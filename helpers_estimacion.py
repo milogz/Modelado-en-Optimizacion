@@ -86,7 +86,7 @@ def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
 
             ax.set_xlabel("x")
             ax.set_ylabel("y")
-            ax.set_title(f"Ajuste manual • Suma Errores = {sse:.3f}")
+            ax.set_title(f"Ajuste manual • (Suma Errores = {sse:.3f})")
             ax.legend(loc="best")
             ax.grid(True, linewidth=0.3, alpha=0.5)
             plt.show()
