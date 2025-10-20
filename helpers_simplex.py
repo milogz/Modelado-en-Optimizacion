@@ -1,4 +1,120 @@
 import numpy as np
+import matplotlib.pyplot as plt
+from IPython.display import display, Math, HTML
+import ipywidgets as W
+from ipywidgets import HTMLMath
+
+
+def _blk(s):
+    # Negro: info de la base actual
+    return f"<div style='color:#111; font-weight:500;'>{s}</div>"
+
+def _blu(s):
+    # Azul: x y costos reducidos
+    return f"<div style='color:#1e3a8a; font-weight:500;'>{s}</div>"
+
+def _red(s):
+    # Rojo: movimiento (dirección/longitud/nuevo punto)
+    return f"<div style='color:#b91c1c; font-weight:600;'>{s}</div>"
+
+
+def init_fig(A, b):
+    # Figura única: región factible + BFS
+    fig, ax = plt.subplots(figsize=(6,5))
+    ax, line_colors, hull = plot_method_graph(A[:, :2], b, x=None, ax=ax,
+                                              title="Método gráfico + BFS", show_fill=True)
+    fig.canvas.header_visible = False
+    fig.canvas.footer_visible = False
+    plt.close(fig)
+
+    fig_widget = W.Output()
+    with fig_widget:
+        display(fig)
+    return fig, ax, fig_widget
+
+# =============================================================
+# CALLBACKS DE LOS BOTONES
+# =============================================================
+
+def _draw_point_and_vectors(A, b, fig, ax, fig_widget, x_now=None, d=None, theta=None):
+    # Limpia y repinta: región factible + líneas (se conserva estilo)
+    ax.clear()
+    plot_method_graph(A[:, :2], b, x=None, ax=ax, title="Método gráfico + BFS", show_fill=True)
+    # Punto actual en negro
+    if x_now is not None:
+        ax.scatter([x_now[0]], [x_now[1]], s=60, color="black", zorder=6)
+    # Flecha de dirección y nuevo punto en rojo
+    if (d is not None) and (theta is not None) and np.isfinite(theta):
+        p = x_now
+        q = x_now + theta * d[:2]
+        ax.annotate("", xy=(q[0], q[1]), xytext=(p[0], p[1]),
+                    arrowprops=dict(arrowstyle="->", linewidth=2, color="red"))
+        ax.scatter([q[0]], [q[1]], s=60, color="red", zorder=6)
+    fig_widget.clear_output(wait=True)
+    with fig_widget:
+        display(fig)
+
+
+# === CALLBACKS ===
+def _on_info_clicked(_):
+    log_base.value = ""     
+    log_move.value = ""  
+
+    try:
+        # === Leer checkboxes y fijar Bcols ===
+        seleccionados = [chk.value for j, chk in enumerate(checks.children, start=1)]
+        STATE["Bcols"] = seleccionados
+
+        # === Resto del flujo ===
+        info, html_blk = resumir_info_base_actual(STATE["A"], STATE["b"], STATE["c"], STATE["Bcols"])
+        STATE["info"] = info
+
+        var_names = ['x1','x2','s1','s2','s3']
+        nonbasic = [(v,i) for i,v in enumerate(var_names) if not STATE["Bcols"][i]]
+        enter_drop.options = nonbasic
+        enter_drop.value = nonbasic[0][1]
+
+        log_base.value += _blk(html_blk)
+        html_blue = verificar_costos_reducidos(info)
+        log_base.value += _blu(html_blue)
+
+        STATE["x_plot"] = info["x"][:2]
+        _draw_point_and_vectors(x_now=STATE["x_plot"])
+
+    except Exception as e:
+        log_base.value += f"<pre style='color:#b91c1c'>[error info] {e}</pre>"
+
+
+def _on_move_clicked(_):
+    log_move.value = ""     # opcional: limpiar solo el panel rojo
+    try:
+        if STATE["info"] is None:
+            log_move.value += "<div style='color:#b91c1c'>Primero pulsa “1) Info Base Actual”.</div>"
+            return
+        j_in = enter_drop.value
+        STATE["last_enter"] = j_in
+
+        st, html_red = calcular_direccion_y_longitud(STATE["A"], STATE["info"], j_in)        
+        log_move.value += _red(html_red)
+
+        if np.isfinite(st["theta"]):
+            _draw_point_and_vectors(x_now=STATE["x_plot"], d=st["d"], theta=st["theta"])
+            STATE["x_plot"] = st["x_new"][:2]
+            if st["leave"] is not None:
+                '''
+                B_idx = [i for i,v in enumerate(STATE["Bcols"]) if v]
+                print(B_idx)
+                Bset = set(B_idx) - {st["leave"]}
+                Bset.add(j_in)
+                aux = [(i in Bset) for i in range(STATE["A"].shape[1]) ]
+                print(aux)
+                '''                
+                STATE["Bcols"][j_in] = True
+                STATE["Bcols"][st["leave"]] = False
+    except Exception as e:
+        log_move.value += f"<pre style='color:#b91c1c'>[error move] {e}</pre>"
+
+
 
 # ============= Formatting helpers =============
 
