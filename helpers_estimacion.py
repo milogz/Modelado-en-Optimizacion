@@ -22,21 +22,6 @@ def ejemplo_ilustrativo():
 
 	return DF, true_coefs
 
-'''
-def ajuste_manual(x, y):    
-    m_slider = widgets.FloatSlider(value=1, min=-10, max=10, step=0.1, description="Pendiente")
-    b_slider = widgets.FloatSlider(value=0, min=-10, max=10, step=0.5, description="Intercepto")
-
-    def update(m, b):
-        plt.figure(figsize=(6,4))
-        plt.scatter(x, y, alpha=0.6)
-        plt.plot(x, m*x + b, color="red")
-        plt.xlabel("x"); plt.ylabel("y")
-        plt.show()
-
-    widgets.interact(update, m=m_slider, b=b_slider)
-'''
-
 def ajuste_manual(x, y, m_init=1.0, b_init=0.0,
                   show_residuals=True, punto_alpha=0.6, resid_alpha=0.35):
     """

@@ -124,3 +124,59 @@ def tabla_comp():
     </table>
     """
     display(HTML(html_table))
+
+
+# =============================================================
+# Algoritmos centrales de busqueda (movidos desde notebook 3-1)
+# =============================================================
+
+def vecindario_circular(x0, d=.2, k=8):
+    """
+    Genera 'k' puntos vecinos distribuidos en un circulo
+    de radio 'd' alrededor de 'x0'.
+    Retorna: Lista de puntos vecinos.
+    """
+    angulos = np.linspace(0, 2*np.pi, k, endpoint=False)
+    vecinos = [x0 + d * np.array([np.cos(theta), np.sin(theta)]) for theta in angulos]
+    return vecinos
+
+
+def vecindario_lineal(x, d=0.5):
+    """Version simplificada para ejemplo 1D: 'vecinos' en una linea."""
+    x = float(np.asarray(x).ravel()[0])
+    return np.array([[x - d], [x + d]], dtype=float)
+
+
+def busqueda_local(x0, f, generador_vecinos, iters=50):
+    """
+    Evalua vecinos de x0 y elige movimiento que mejore f(x)
+    hasta que no se halle mejora o se alcanzan 'iters' iteraciones.
+    """
+    x = x0.copy()
+    hist = [x.copy()]
+    for _ in range(iters):
+        vecinos = generador_vecinos(x)
+        objs = np.array([f(v) for v in vecinos])
+        idx = np.argmin(objs)
+        x_new = vecinos[idx]
+        if (f(x_new) - f(x)) >= 0:
+            break
+        x = x_new
+        hist.append(x.copy())
+    return np.array(hist)
+
+
+def descenso_gradiente(x0, grad, alpha=0.05, iters=50, tol=1e-4):
+    """
+    Aplica movimientos de longitud 'alpha' en direccion del gradiente
+    desde x0, con parada por norma del gradiente (tol) o max iteraciones (iters).
+    """
+    x = x0.copy()
+    hist = [x.copy()]
+    for _ in range(iters):
+        g = grad(x)
+        if np.linalg.norm(g) < tol:
+            break
+        x = x - alpha * g
+        hist.append(x.copy())
+    return np.array(hist)
