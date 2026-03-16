@@ -34,4 +34,15 @@ Los notebooks siguen una progresión didáctica:
 - **MO_3-7 MILP.ipynb**  
   Introducción a la programación lineal entera mixta (MILP).
 
-Los notebooks están apoyados por scripts auxiliares (carpeta `src`) y figuras en la carpeta `assets/figs`.
+- **MO_3-8 DP.ipynb**  
+  Programación Dinámica: inducción hacia atrás, equivalencia DP→LP, puente hacia Reinforcement Learning.
+
+### 🧭 Hilo Narrativo (Semestre 2026-10)
+
+El módulo sigue un flujo progresivo:
+
+1. **Más allá de lo Lineal** → De Simplex a heurísticas; trade-off calidad–tiempo.
+2. **La Optimización como Motor de ML** → Descenso de Gradiente; función de pérdida; regresión y clasificación.
+3. **Decisiones en el Tiempo** → Programación Dinámica → puerta abierta al Reinforcement Learning.
+
+Los notebooks están apoyados por scripts auxiliares (`helpers_*.py`) y figuras en la carpeta `assets/figs`.

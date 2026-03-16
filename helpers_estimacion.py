@@ -148,3 +148,98 @@ def plot_ols(x, y, title="", xlabel="x", ylabel="y",
     plt.show()
 
 
+# ─────────────────────────────────────────────────────────────────────
+# Actualización 2026: funciones para el módulo de Optimización → ML
+# ─────────────────────────────────────────────────────────────────────
+
+def plot_loss_surface(x, y, a_range=(-10, 25), b_range=(-2, 10),
+                      path=None, title="Superficie de pérdida (MSE)"):
+    """
+    Visualiza la superficie de pérdida MSE L(a,b) = (1/n) sum (y - (a + b*x))^2
+    como gráfico 3D + contorno, con trayectoria GD opcional.
+    """
+    x = np.asarray(x).ravel()
+    y = np.asarray(y).ravel()
+
+    A = np.linspace(*a_range, 100)
+    B = np.linspace(*b_range, 100)
+    AA, BB = np.meshgrid(A, B)
+
+    ZZ = np.zeros_like(AA)
+    for i in range(len(A)):
+        for j in range(len(B)):
+            pred = AA[j, i] + BB[j, i] * x
+            ZZ[j, i] = np.mean((y - pred) ** 2)
+
+    fig = plt.figure(figsize=(14, 5))
+
+    ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+    ax1.plot_surface(AA, BB, ZZ, alpha=0.6, cmap='viridis')
+    if path is not None:
+        path = np.asarray(path)
+        L_path = [np.mean((y - (a + b * x)) ** 2) for a, b in path]
+        ax1.plot(path[:, 0], path[:, 1], L_path, 'r.-', linewidth=2, markersize=5, label='GD')
+        ax1.legend()
+    ax1.set_xlabel('a (intercepto)')
+    ax1.set_ylabel('b (pendiente)')
+    ax1.set_zlabel('MSE')
+    ax1.set_title(title)
+
+    ax2 = fig.add_subplot(1, 2, 2)
+    ax2.contour(AA, BB, ZZ, levels=30, alpha=0.7, cmap='viridis')
+    if path is not None:
+        ax2.plot(path[:, 0], path[:, 1], 'r.-', linewidth=1.5, markersize=5, label='GD')
+        ax2.plot(path[0, 0], path[0, 1], 'go', markersize=10, label='Inicio')
+        ax2.plot(path[-1, 0], path[-1, 1], 'rs', markersize=10, label='Final')
+        ax2.legend(fontsize=8)
+    ax2.set_xlabel('a (intercepto)')
+    ax2.set_ylabel('b (pendiente)')
+    ax2.set_title('Curvas de nivel')
+    ax2.grid(alpha=0.3)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def sigmoid(z):
+    """Función sigmoide: sigma(z) = 1 / (1 + exp(-z))."""
+    return 1.0 / (1.0 + np.exp(-np.clip(z, -500, 500)))
+
+
+def logistic_loss(y, y_hat, eps=1e-15):
+    """Pérdida logística (cross-entropy binaria)."""
+    y_hat = np.clip(y_hat, eps, 1 - eps)
+    return -np.mean(y * np.log(y_hat) + (1 - y) * np.log(1 - y_hat))
+
+
+def gd_logistic(X, y, lr=0.1, epochs=200):
+    """
+    Descenso de gradiente para regresión logística.
+    X : (n, d) con columna de 1s; y : (n,) etiquetas {0,1}.
+    """
+    n, d = X.shape
+    theta = np.zeros(d)
+    losses = []
+    thetas = [theta.copy()]
+    for _ in range(epochs):
+        z = X @ theta
+        p = sigmoid(z)
+        grad = (1 / n) * X.T @ (p - y)
+        theta = theta - lr * grad
+        losses.append(logistic_loss(y, sigmoid(X @ theta)))
+        thetas.append(theta.copy())
+    return theta, losses, thetas
+
+
+def plot_decision_boundary(X, y, theta, title="Frontera de decision"):
+    """Dibuja scatter 2D con frontera de decision lineal. X: [1, x1, x2]."""
+    fig, ax = plt.subplots(figsize=(6, 5))
+    ax.scatter(X[y == 0, 1], X[y == 0, 2], label='Clase 0', alpha=0.6, edgecolors='k')
+    ax.scatter(X[y == 1, 1], X[y == 1, 2], label='Clase 1', alpha=0.6, edgecolors='k')
+    if abs(theta[2]) > 1e-10:
+        x1_range = np.linspace(X[:, 1].min() - 0.5, X[:, 1].max() + 0.5, 200)
+        x2_boundary = -(theta[0] + theta[1] * x1_range) / theta[2]
+        ax.plot(x1_range, x2_boundary, 'k--', linewidth=2, label='Frontera')
+    ax.set_xlabel('$x_1$'); ax.set_ylabel('$x_2$')
+    ax.set_title(title); ax.legend(); ax.grid(alpha=0.3)
+    plt.tight_layout(); plt.show()
