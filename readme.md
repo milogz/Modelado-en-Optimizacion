@@ -37,6 +37,20 @@ Los notebooks siguen una progresión didáctica:
 - **MO_3-8 DP.ipynb**  
   Programación Dinámica: inducción hacia atrás, equivalencia DP→LP, puente hacia Reinforcement Learning.
 
+### 🧪 Laboratorios Interactivos (Dashboards)
+
+Los dashboards son notebooks complementarios enfocados en **experimentación** con los conceptos clave, separando la exploración interactiva del desarrollo paso a paso de las lecciones.
+
+- **MO_Lab_3-1_Busqueda_Dashboard.ipynb**  
+  Comparación interactiva de búsqueda local vs descenso por gradiente. Controles para parámetros de vecindario (radio $d$, vecinos $k$) y tasa de aprendizaje ($\alpha$) sobre distintas superficies (Cuadrática, Rosenbrock, Rastrigin).  
+  *Complementa*: `MO_3-1 Busqueda.ipynb`
+
+- **MO_Lab_3-3_LP_Dashboard.ipynb**  
+  Dashboard unificado de LP con dos tabs:  
+  • **Tab 1** – Factibilidad y Holguras: explorar puntos, ver holguras y restricciones activas en tiempo real.  
+  • **Tab 2** – Simplex Paso a Paso: ejecutar iteraciones del Simplex visualmente (dirección, longitud, pivoteo).  
+  *Complementa*: `MO_3-3 LP (Bases).ipynb` y `MO_3-4 LP (Simplex).ipynb`
+
 ### 🧭 Hilo Narrativo (Semestre 2026-10)
 
 El módulo sigue un flujo progresivo:
